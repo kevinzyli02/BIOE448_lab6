@@ -3,8 +3,8 @@ bool first_peak_detected = false;
 unsigned long first_pulse_time = 0;
 unsigned long second_pulse_time = 0;
 unsigned long pulse_period = 0;
-int upper_threshold = 800;
-int lower_threshold = 450;
+int upper_threshold = 900;
+int lower_threshold = 750;
 
 const int sensor_pin = A0;
 int pulse_signal = 0;
@@ -24,10 +24,6 @@ void loop() {
   if (pulse_signal > upper_threshold && any_peak_detected == false) {
     any_peak_detected = true;
     // Do something about this peak
-  }
-
-  if (pulse_signal < lower_threshold) {
-    any_peak_detected = false;
     if (first_peak_detected == false) {
       first_pulse_time = millis();
       first_peak_detected = true;
@@ -35,8 +31,16 @@ void loop() {
     else {
       second_pulse_time = millis();
       pulse_period = second_pulse_time - first_pulse_time;
+      first_peak_detected = false;
       }
   }
-  
-  Serial.println(pulse_period);
+
+  if (pulse_signal < lower_threshold) {
+    any_peak_detected = false;
+  }
+
+  //pulse_in_sec = pulse_period / 1000;
+  //Serial.println(pulse_period);
+  BPM = 60.0 * (1/(pulse_period/1000.0));
+  Serial.println(BPM);
 }
